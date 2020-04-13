@@ -7,23 +7,31 @@ var router = express.Router();
 router.get("/usa", function(req, res) {
 
     axios.get("https://www.worldometers.info/coronavirus/country/us/").then(function(response) {
-     
-        var $ = cheerio.load(response.data);
+        
+        let $ = cheerio.load(response.data);
 
-        $('div[id="maincounter-wrap"]').each(function(i, element) {
-            var result = {};
+        $('table[id="usa_table_countries_today"]').each(function(i, element) {
+            let result = {};
+            let countryObject = {}
 
-            result.totalCases = $(element).find("div.maincounter-number").children("span")
-          .text().trim();
+            result.countryTotalCases = $(element).find(`tbody:nth-child(2)`).children(`tr:nth-child(1)`).children('td:nth-child(2)')
+            .text().trim();
 
-          console.log(result.totalCases)
+            result.countryTotalDeaths = $(element).find(`tbody:nth-child(2)`).children(`tr:nth-child(1)`).children('td:nth-child(4)')
+            .text().trim();
+
+            countryObject = {
+                totalCases: result.countryTotalCases,
+                totalDeaths: result.countryTotalDeaths,
+            }
+
+          console.log(countryObject)
         })
     })
 });
 
-//router.get('/states', function(req, res) {
+router.get('/states', function(req, res) {
     axios.get("https://www.worldometers.info/coronavirus/country/us/").then(function(response) {
-     
         var $ = cheerio.load(response.data);
 
         $('table[id="usa_table_countries_today"]').each(function(i, element) {
@@ -32,11 +40,9 @@ router.get("/usa", function(req, res) {
             let statesObject = {}
 
             let statesArray = []
-            // result.states = $(element).find("tbody:nth-child(2)").children('tr:nth-child(3)').children('td:nth-child(1)')
-            // .text().trim();
-
+            
+            //loops through to create an object for the state statistics
             for (i=2; i < 53; i++) {
-
                 result.stateName = $(element).find(`tbody:nth-child(2)`).children(`tr:nth-child(${i})`).children('td:nth-child(1)')
                 .text().trim();
     
@@ -51,16 +57,9 @@ router.get("/usa", function(req, res) {
                     totalCases: result.stateTotalCases,
                     totalDeaths: result.stateTotalDeaths
                 }
-                
                 statesArray.push(statesObject)
             }
-
-            
-
-          console.log(statesArray)
-          
+          console.log(statesArray) 
         })
     })
-
-
-//});
+});
