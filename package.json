@@ -1,0 +1,25 @@
+{
+  "name": "Covid_Tracker",
+  "version": "1.0.0",
+  "description": "Covid tracker keeps you up to date on the latest Covid-19 statistics from the USA",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willrackley/Covid_Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/willrackley/Covid_Tracker/issues"
+  },
+  "homepage": "https://github.com/willrackley/Covid_Tracker#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7"
+  }
+}
