@@ -1,18 +1,17 @@
-var express = require('express');
-var db = require("../models");
-var axios = require("axios");
-var cheerio = require("cheerio");
-var router = express.Router();
+let express = require('express');
+let axios = require("axios");
+let cheerio = require("cheerio");
+let router = express.Router();
 
 router.get("/usa", function(req, res) {
-
+    let countryObject = {}
     axios.get("https://www.worldometers.info/coronavirus/country/us/").then(function(response) {
         
         let $ = cheerio.load(response.data);
 
         $('table[id="usa_table_countries_today"]').each(function(i, element) {
             let result = {};
-            let countryObject = {}
+            
 
             result.countryTotalCases = $(element).find(`tbody:nth-child(2)`).children(`tr:nth-child(1)`).children('td:nth-child(2)')
             .text().trim();
@@ -25,8 +24,8 @@ router.get("/usa", function(req, res) {
                 totalDeaths: result.countryTotalDeaths,
             }
 
-          console.log(countryObject)
         })
+        res.send(countryObject)
     })
 });
 
@@ -59,7 +58,8 @@ router.get('/states', function(req, res) {
                 }
                 statesArray.push(statesObject)
             }
-          console.log(statesArray) 
         })
     })
 });
+
+module.exports = router;

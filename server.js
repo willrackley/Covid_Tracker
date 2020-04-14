@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const db = require("./models");
+const routes = require("./routes")
+//const db = require("./models");
 
 const PORT = process.env.PORT || 4000;
 
@@ -18,12 +19,7 @@ if (process.env.NODE_ENV === "production") {
     app.use(express.static("client/build"));
 }
 
-// db.Usa.create({
-//     totalCases: 560433,
-//     totalDeaths: 22115, 
-//     totalRecovered: 32634
-// })
-
+app.use(routes)
 
 // Start the API server
 app.listen(PORT, function() {
