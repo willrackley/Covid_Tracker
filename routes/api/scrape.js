@@ -30,6 +30,7 @@ router.get("/usa", function(req, res) {
 });
 
 router.get('/states', function(req, res) {
+    let statesArray = []
     axios.get("https://www.worldometers.info/coronavirus/country/us/").then(function(response) {
         var $ = cheerio.load(response.data);
 
@@ -38,8 +39,6 @@ router.get('/states', function(req, res) {
 
             let statesObject = {}
 
-            let statesArray = []
-            
             //loops through to create an object for the state statistics
             for (i=2; i < 53; i++) {
                 result.stateName = $(element).find(`tbody:nth-child(2)`).children(`tr:nth-child(${i})`).children('td:nth-child(1)')
@@ -59,6 +58,7 @@ router.get('/states', function(req, res) {
                 statesArray.push(statesObject)
             }
         })
+        res.send(statesArray)
     })
 });
 

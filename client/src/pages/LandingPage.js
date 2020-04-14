@@ -7,6 +7,7 @@ import FormControl from "react-bootstrap/FormControl";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import StatesCard from "../components/StateCards"
 import API from "../utils/API"
 
 class LandingPage extends Component {
@@ -15,11 +16,13 @@ class LandingPage extends Component {
         usa_stats: {
             total_cases: 0,
             total_deaths: 0
-        }
+        },
+        states_stats: []
     }
 
     componentDidMount(){
         this.get_usa_stats();
+        this.get_states_stats();
     }
 
     get_usa_stats = () => {
@@ -33,6 +36,14 @@ class LandingPage extends Component {
             })
         })
         .catch(err => console.log(err));
+    }
+
+    get_states_stats = () => {
+        API.scrape_states()
+        .then(res => {
+            this.setState({ states_stats: res.data})
+            //console.log(res.data)
+        })
     }
 
     render() {
@@ -60,7 +71,7 @@ class LandingPage extends Component {
                     </Navbar.Collapse>
                 </Navbar>
 
-                <Jumbotron fluid="true" className="">
+                <Jumbotron fluid="true" className="mb-5">
                     <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
                     <div className="row">
                         <div className="col-md-6 d-flex justify-content-center p-2">
@@ -85,6 +96,14 @@ class LandingPage extends Component {
                         </div>
                     </div>
                 </Jumbotron>
+
+                <div>
+                    <div className="display-4 text-center mb-5"> Covid-19 Statistics by State</div>
+
+                    <StatesCard 
+                        results={this.state.states_stats}
+                    />
+                </div>
             </div>
         )
     }
