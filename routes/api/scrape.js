@@ -51,6 +51,7 @@ router.get('/states', function(req, res) {
                 .text().trim();
                 
                 statesObject = {
+                    key: i,
                     state: result.stateName,
                     totalCases: result.stateTotalCases,
                     totalDeaths: result.stateTotalDeaths

@@ -9,6 +9,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import StatesCard from "../components/StateCards"
 import API from "../utils/API"
+import moment from "moment";
 
 class LandingPage extends Component {
 
@@ -23,6 +24,13 @@ class LandingPage extends Component {
     componentDidMount(){
         this.get_usa_stats();
         this.get_states_stats();
+
+        //saving the 
+        if (moment().isAfter(moment('5:00pm', 'h:mma'))) {
+
+
+            console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+        }
     }
 
     get_usa_stats = () => {
@@ -74,6 +82,7 @@ class LandingPage extends Component {
                 <Jumbotron fluid="true" className="mb-5">
                     <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
                     <div className="row">
+                        
                         <div className="col-md-6 d-flex justify-content-center p-2">
                         <Card className="text-center p-2" style={{ width: '18rem' }}>
                             <Card.Body>
