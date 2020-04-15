@@ -18,22 +18,39 @@ class LandingPage extends Component {
             total_cases: 0,
             total_deaths: 0
         },
-        states_stats: []
+        states_stats: [],
     }
 
-    componentDidMount(){
-        this.get_usa_stats();
-        this.get_states_stats();
+    async componentDidMount(){
+        await this.get_current_usa_stats();
+        await this.get_states_stats();
 
-        //saving the 
-        if (moment().isAfter(moment('5:00pm', 'h:mma'))) {
+        await new Promise((resolve, reject) => setTimeout(resolve, 2000))
+        //saving the stats for the day if its past 5pm
+        if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
+            //get the latest entry of usa stats
+            // API.get_all_usa_stats()
+            // .then(res => {
 
+            //     console.log(res.data[0])
+                
+            // })
 
-            console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+            let saved_stats = {
+                totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
+                totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
+            }
+            console.log(saved_stats)
+            // save the current stats if its after 5pm
+            API.save_current_usa_stats(saved_stats)
+            .then(res => {
+            })
+            .catch(err => console.log(err))
+            //console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
         }
     }
 
-    get_usa_stats = () => {
+    get_current_usa_stats = () => {
         API.scrape_usa()
         .then(res => {
             this.setState({

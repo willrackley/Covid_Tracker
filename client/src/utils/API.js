@@ -6,5 +6,11 @@ export default {
     },
     scrape_states: function() {
         return axios.get('/api/scrape/states')
+    },
+    get_all_usa_stats: function() {
+        return axios.get('/api/usa_stats')
+    },
+    save_current_usa_stats: function(saved_stats) {
+        return axios.post('/api/usa_stats/saved', saved_stats)
     }
 }

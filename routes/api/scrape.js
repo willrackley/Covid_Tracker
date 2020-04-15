@@ -23,7 +23,6 @@ router.get("/usa", function(req, res) {
                 totalCases: result.countryTotalCases,
                 totalDeaths: result.countryTotalDeaths,
             }
-
         })
         res.send(countryObject)
     })

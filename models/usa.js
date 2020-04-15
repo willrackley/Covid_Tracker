@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const UsaSchema = new Schema({
     totalCases: { type: Number },
     totalDeaths: { type: Number }, 
-    totalRecovered: {type: Number },
     created_at : {type: Date, index : true, default: Date.now}
 })
 
