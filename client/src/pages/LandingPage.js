@@ -16,27 +16,53 @@ class LandingPage extends Component {
     state = {
         usa_stats: {
             total_cases: 0,
-            total_deaths: 0
+            total_deaths: 0,
         },
         states_stats: [],
+        yesterday_usa_stats: {
+            total_cases: 0,
+            total_deaths: 0,
+            timestamp: 0
+        },
+        day_change_stats: {
+            total_cases: 0,
+            total_deaths: 0
+        }
     }
 
     async componentDidMount(){
         await this.get_current_usa_stats();
         await this.get_states_stats();
 
-        API.get_latest_usa_stats()
-        .then(res => {
-            console.log(moment(res.data[0].created_at).format("h:mm MMMM Do YYYY"))
-    
-        })
 
         await new Promise((resolve, reject) => setTimeout(resolve, 2000))
+
+        API.get_latest_usa_stats()
+        .then(res => {
+            console.log(parseInt(res.data[0].totalDeaths))
+            this.setState({
+                yesterday_usa_stats: {
+                    total_cases: res.data[0].totalCases,
+                    total_deaths: res.data[0].totalDeaths,
+                    timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
+                }, 
+                
+            })
+
+            // let typeConversion = parseInt(this.state.usa_stats.total_cases.replace(/,/g,''))
+            // console.log(typeConversion)
+            this.setState({
+                day_change_stats: {
+                    total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
+                    total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
+                
+                } 
+            })
+        })
         //saving the stats for the day if its past 5pm
         if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
-            //get the latest entry of usa stats
-           
 
+            //get the latest entry of usa stats
             let saved_stats = {
                 totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
                 totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
@@ -99,12 +125,12 @@ class LandingPage extends Component {
 
                 <Jumbotron fluid="true" className="mb-5">
                     <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
+                    <div className="text-center h3">Current Statistics</div>
                     <div className="row">
-                        
                         <div className="col-md-6 d-flex justify-content-center p-2">
                         <Card className="text-center p-2" style={{ width: '18rem' }}>
                             <Card.Body>
-                                <Card.Title>USA Total Covid-19 Cases</Card.Title>
+                                <Card.Title>USA Total Cases</Card.Title>
                                 <Card.Text>
                                     {this.state.usa_stats.total_cases}
                                 </Card.Text>
@@ -114,9 +140,33 @@ class LandingPage extends Component {
                         <div className="col-md-6 d-flex justify-content-center p-2">
                             <Card className="text-center p-2" style={{ width: '18rem' }}>
                                 <Card.Body>
-                                    <Card.Title>USA Total Covid-19 Deaths</Card.Title>
+                                    <Card.Title>USA Total Deaths</Card.Title>
                                     <Card.Text>
                                         {this.state.usa_stats.total_deaths}
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </div>
+                    <div className="text-center h3">Day Change Statistics </div>
+                    <div className="text-center">Data saved at {this.state.yesterday_usa_stats.timestamp} </div>
+                    <div className="row">
+                        <div className="col-md-6 d-flex justify-content-center p-2">
+                        <Card className="text-center p-2" style={{ width: '18rem' }}>
+                            <Card.Body>
+                                <Card.Title>USA Total Cases</Card.Title>
+                                <Card.Text>
+                                    {this.state.day_change_stats.total_cases}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                        </div>
+                        <div className="col-md-6 d-flex justify-content-center p-2">
+                            <Card className="text-center p-2" style={{ width: '18rem' }}>
+                                <Card.Body>
+                                    <Card.Title>USA Total Deaths</Card.Title>
+                                    <Card.Text>
+                                        {this.state.day_change_stats.total_deaths}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
