@@ -25,16 +25,17 @@ class LandingPage extends Component {
         await this.get_current_usa_stats();
         await this.get_states_stats();
 
+        API.get_latest_usa_stats()
+        .then(res => {
+            console.log(moment(res.data[0].created_at).format("h:mm MMMM Do YYYY"))
+    
+        })
+
         await new Promise((resolve, reject) => setTimeout(resolve, 2000))
         //saving the stats for the day if its past 5pm
         if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
             //get the latest entry of usa stats
-            // API.get_all_usa_stats()
-            // .then(res => {
-
-            //     console.log(res.data[0])
-                
-            // })
+           
 
             let saved_stats = {
                 totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
@@ -42,10 +43,10 @@ class LandingPage extends Component {
             }
             console.log(saved_stats)
             // save the current stats if its after 5pm
-            API.save_current_usa_stats(saved_stats)
-            .then(res => {
-            })
-            .catch(err => console.log(err))
+            // API.save_current_usa_stats(saved_stats)
+            // .then(res => {
+            // })
+            // .catch(err => console.log(err))
             //console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
         }
     }

@@ -7,7 +7,7 @@ export default {
     scrape_states: function() {
         return axios.get('/api/scrape/states')
     },
-    get_all_usa_stats: function() {
+    get_latest_usa_stats: function() {
         return axios.get('/api/usa_stats')
     },
     save_current_usa_stats: function(saved_stats) {
