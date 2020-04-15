@@ -27,7 +27,10 @@ class LandingPage extends Component {
         day_change_stats: {
             total_cases: 0,
             total_deaths: 0
-        }
+        },
+        isLoading_day_change: true,
+        isLoading_usa_current_stats: true,
+        isLoading_states_stats: true
     }
 
     async componentDidMount(){
@@ -39,41 +42,40 @@ class LandingPage extends Component {
 
         API.get_latest_usa_stats()
         .then(res => {
-            console.log(parseInt(res.data[0].totalDeaths))
             this.setState({
                 yesterday_usa_stats: {
                     total_cases: res.data[0].totalCases,
                     total_deaths: res.data[0].totalDeaths,
                     timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
                 }, 
-                
-            })
-
-            // let typeConversion = parseInt(this.state.usa_stats.total_cases.replace(/,/g,''))
-            // console.log(typeConversion)
-            this.setState({
                 day_change_stats: {
                     total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
                     total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
-                
-                } 
+                },
+                isLoading_day_change: false,
             })
         })
-        //saving the stats for the day if its past 5pm
+        //saving the stats for the day if its past 5pm (but only save it once)
         if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
 
-            //get the latest entry of usa stats
-            let saved_stats = {
-                totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
-                totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
-            }
-            console.log(saved_stats)
-            // save the current stats if its after 5pm
-            // API.save_current_usa_stats(saved_stats)
-            // .then(res => {
-            // })
-            // .catch(err => console.log(err))
-            //console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+            //first check if the stats have been saved for today, if not then we save them
+            API.get_latest_usa_stats()
+            .then(res => {
+                if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
+                    return;
+                } else {
+                    let saved_stats = {
+                        totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
+                        totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
+                    }
+                    
+                    API.save_current_usa_stats(saved_stats)
+                    .then(res => {
+                    })
+                    .catch(err => console.log(err))
+                }
+            })
+            .catch(err => console.log(err)) 
         }
     }
 
@@ -84,7 +86,8 @@ class LandingPage extends Component {
                 usa_stats: {
                     total_cases: res.data.totalCases,
                     total_deaths: res.data.totalDeaths
-                }
+                },
+                isLoading_usa_current_stats: false
             })
         })
         .catch(err => console.log(err));
@@ -93,8 +96,10 @@ class LandingPage extends Component {
     get_states_stats = () => {
         API.scrape_states()
         .then(res => {
-            this.setState({ states_stats: res.data})
-            //console.log(res.data)
+            this.setState({ 
+                states_stats: res.data,
+                isLoading_states_stats: false
+            })
         })
     }
 
@@ -132,7 +137,9 @@ class LandingPage extends Component {
                             <Card.Body>
                                 <Card.Title>USA Total Cases</Card.Title>
                                 <Card.Text>
-                                    {this.state.usa_stats.total_cases}
+                                    {this.state.isLoading_usa_current_stats ? <span className="spinner-border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                    </span>:<span>{this.state.usa_stats.total_cases}</span>}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -142,7 +149,9 @@ class LandingPage extends Component {
                                 <Card.Body>
                                     <Card.Title>USA Total Deaths</Card.Title>
                                     <Card.Text>
-                                        {this.state.usa_stats.total_deaths}
+                                        {this.state.isLoading_usa_current_stats ? <span className="spinner-border" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                        </span>:<span>{this.state.usa_stats.total_deaths}</span>}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -152,21 +161,27 @@ class LandingPage extends Component {
                     <div className="text-center">Data saved at {this.state.yesterday_usa_stats.timestamp} </div>
                     <div className="row">
                         <div className="col-md-6 d-flex justify-content-center p-2">
+                        
                         <Card className="text-center p-2" style={{ width: '18rem' }}>
                             <Card.Body>
                                 <Card.Title>USA Total Cases</Card.Title>
                                 <Card.Text>
-                                    {this.state.day_change_stats.total_cases}
+                                    {this.state.isLoading_day_change ? <span className="spinner-border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                    </span>:<span>{this.state.day_change_stats.total_cases}</span>}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
+                        
                         </div>
                         <div className="col-md-6 d-flex justify-content-center p-2">
                             <Card className="text-center p-2" style={{ width: '18rem' }}>
                                 <Card.Body>
                                     <Card.Title>USA Total Deaths</Card.Title>
                                     <Card.Text>
-                                        {this.state.day_change_stats.total_deaths}
+                                    {this.state.isLoading_day_change ? <span className="spinner-border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                    </span>:<span>{this.state.day_change_stats.total_deaths}</span>}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -177,9 +192,11 @@ class LandingPage extends Component {
                 <div>
                     <div className="display-4 text-center mb-5"> Covid-19 Statistics by State</div>
 
-                    <StatesCard 
+                    {this.state.isLoading_states_stats ? <span className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                    </span>:<StatesCard 
                         results={this.state.states_stats}
-                    />
+                    />} 
                 </div>
             </div>
         )
