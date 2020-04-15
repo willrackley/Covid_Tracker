@@ -12,5 +12,8 @@ export default {
     },
     save_current_usa_stats: function(saved_stats) {
         return axios.post('/api/usa_stats/saved', saved_stats)
+    },
+    save_current_states_stats: function(saved_stats) {
+        return axios.post('/api/states_stats/saved', saved_stats)
     }
 }

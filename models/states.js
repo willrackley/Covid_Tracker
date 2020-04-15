@@ -2,10 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const StatesSchema = new Schema({
-    state: { type: String},
-    totalCases: { type: Number },
-    totalDeaths: { type: Number }, 
-    totalRecovered: {type: Number }
+    states: { type: Array},
+    created_at : {type: Date, index : true, default: Date.now}
 })
 
 const States = mongoose.model("States", StatesSchema);
