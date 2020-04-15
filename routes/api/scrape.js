@@ -52,8 +52,8 @@ router.get('/states', function(req, res) {
                 statesObject = {
                     key: i,
                     state: result.stateName,
-                    totalCases: result.stateTotalCases,
-                    totalDeaths: result.stateTotalDeaths
+                    totalCases: parseInt(result.stateTotalCases.replace(/,/g,'')),
+                    totalDeaths: parseInt(result.stateTotalDeaths.replace(/,/g,''))
                 }
                 statesArray.push(statesObject)
             }

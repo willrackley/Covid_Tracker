@@ -22,7 +22,11 @@ class LandingPage extends Component {
         yesterday_usa_stats: {
             total_cases: 0,
             total_deaths: 0,
-            timestamp: 0
+            timestamp: ""
+        },
+        yesterday_states_stats: {
+            states: [],
+            timestamp: ""
         },
         day_change_stats: {
             total_cases: 0,
@@ -35,24 +39,11 @@ class LandingPage extends Component {
 
     async componentDidMount(){
         await this.get_current_usa_stats();
-        await this.get_states_stats();
+      
         await new Promise((resolve, reject) => setTimeout(resolve, 2000))
-
-        API.get_latest_usa_stats()
-        .then(res => {
-            this.setState({
-                yesterday_usa_stats: {
-                    total_cases: res.data[0].totalCases,
-                    total_deaths: res.data[0].totalDeaths,
-                    timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
-                }, 
-                day_change_stats: {
-                    total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
-                    total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
-                },
-                isLoading_day_change: false,
-            })
-        })
+        this.get_current_states_stats();
+        this.get_yesterday_usa_stats();
+        this.get_yesterday_states_stats();
         this.save_usa_stats();
         this.save_states_stats();
     }
@@ -71,7 +62,25 @@ class LandingPage extends Component {
         .catch(err => console.log(err));
     }
 
-    get_states_stats = () => {
+    get_yesterday_usa_stats = () => {
+        API.get_latest_usa_stats()
+        .then(res => {
+            this.setState({
+                yesterday_usa_stats: {
+                    total_cases: res.data[0].totalCases,
+                    total_deaths: res.data[0].totalDeaths,
+                    timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
+                }, 
+                day_change_stats: {
+                    total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
+                    total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
+                },
+                isLoading_day_change: false,
+            })
+        })
+    }
+
+    get_current_states_stats = () => {
         API.scrape_states()
         .then(res => {
             this.setState({ 
@@ -81,6 +90,21 @@ class LandingPage extends Component {
         })
     }
 
+    get_yesterday_states_stats = () => {
+        API.get_latest_states_stats()
+            .then(res => {
+                this.setState({
+                    yesterday_states_stats: {
+                        states: res.data[0].states,
+                        timestamp: res.data[0].created_at
+                    }
+                })
+                
+                console.log(this.state.yesterday_states_stats.states)
+            })
+            .catch(err => console.log(err))
+    }
+
     save_usa_stats = () => {
         //saving the stats for the day if its past 5pm (but only save it once)
         if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
@@ -88,18 +112,33 @@ class LandingPage extends Component {
             //first check if the stats have been saved for today, if not then we save them
             API.get_latest_usa_stats()
             .then(res => {
-                if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
-                    return;
-                } else {
+
+                //if database is empty then add the stats, if not check if the latest entry matches todays date. If so then dont add it.
+                if (res.data.length === 0) {
+
                     let saved_stats = {
-                        totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
-                        totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
+                    totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
+                    totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
                     }
                     
                     API.save_current_usa_stats(saved_stats)
                     .then(res => {
                     })
                     .catch(err => console.log(err))
+                } else {
+                    if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
+                        return;
+                    } else {
+                        let saved_stats = {
+                            totalCases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')),
+                            totalDeaths:  parseInt(this.state.usa_stats.total_deaths.replace(/,/g,''))
+                        }
+                        
+                        API.save_current_usa_stats(saved_stats)
+                        .then(res => {
+                        })
+                        .catch(err => console.log(err))
+                    }
                 }
             })
             .catch(err => console.log(err)) 
@@ -107,12 +146,37 @@ class LandingPage extends Component {
     }
 
     save_states_stats = () => {
-        let stats_to_save = { states: this.state.states_stats };
-        console.log(stats_to_save)
-        API.save_current_states_stats(stats_to_save)
-        .then(res => {
-        })
-        .catch(err => console.log(err))
+        //saving the stats for the day if its past 5pm (but only save it once)
+        if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
+
+            //first check if the stats have been saved for today, if not then we save them
+            API.get_latest_states_stats()
+            .then(res => {
+                
+                //if database is empty then add the stats, if not check if the latest entry matches todays date. If so then dont add it.
+                if (res.data.length === 0) {
+                    let stats_to_save = { states: this.state.states_stats };
+                    
+                    API.save_current_states_stats(stats_to_save)
+                    .then(res => {
+                    })
+                    .catch(err => console.log(err))
+                } else {
+
+                    if ((moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY"))) {
+                        return;
+                    } else {
+                        let stats_to_save = { states: this.state.states_stats };
+                        console.log(stats_to_save)
+                        API.save_current_states_stats(stats_to_save)
+                        .then(res => {
+                        })
+                        .catch(err => console.log(err))
+                    }
+                } 
+            })
+            .catch(err => console.log(err)) 
+        }
     }
 
     render() {
@@ -205,13 +269,15 @@ class LandingPage extends Component {
                     </div>
                 </Jumbotron>
 
-                <div>
+                <div className="text-center">
                     <div className="display-4 text-center mb-5"> Covid-19 Statistics by State</div>
 
-                    {this.state.isLoading_states_stats ? <span className="spinner-border" role="status">
+                    {this.state.isLoading_states_stats ? <div className=" spinner-border text-center" role="status">
                     <span className="sr-only">Loading...</span>
-                    </span>:<StatesCard 
+                    </div> :
+                    <StatesCard 
                         results={this.state.states_stats}
+                        day_change_cases={this.state.yesterday_states_stats.states}
                     />} 
                 </div>
             </div>
