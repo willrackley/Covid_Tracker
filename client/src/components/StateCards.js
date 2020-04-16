@@ -12,27 +12,28 @@ export default function StatesCard(props) {
                             
                             <div className="card-text">
                                 <div className="">
-                                    <div>Total Cases: <span className="font-weight-bold">{states.totalCases}</span></div>
+                                    <div>Total Cases: <span className="font-weight-bold">{states.totalCases.toLocaleString()}</span></div>
                                     
-                                    <div>Total Deaths: <span className="font-weight-bold">{states.totalDeaths}</span></div>
+                                    <div>Total Deaths: <span className="font-weight-bold">{states.totalDeaths.toLocaleString()}</span></div>
                                 </div>
                             </div>
                         </div>
 
-                        {(states.totalCases - props.day_change_cases[index].totalCases) > 0 || (states.totalDeaths - props.day_change_cases[index].totalDeaths) > 0? <div className="card-footer">
+                         <div className="card-footer">
                             
                             <div className="font-weight-bold text-center">Day Change</div>
-                            <div>Total Cases: <span className="font-weight-bold">
-                            {states.totalCases - props.day_change_cases[index].totalCases}
+
+                            {(states.totalCases - props.day_change_cases[index].totalCases) <= 0 ? <div>
+                            <div>Total Cases: 0</div>
+                            </div> : <div>Total Cases: <span className="font-weight-bold">
+                            {(states.totalCases - props.day_change_cases[index].totalCases).toLocaleString()}</span></div>}
                             
-                            </span></div>
-                                    
-                            <div>Total Deaths: <span className="font-weight-bold">{states.totalDeaths - props.day_change_cases[index].totalDeaths}</span></div>
-                        </div> : <div className="card-footer">
-                                    <div className="font-weight-bold text-center">Day Change</div>
-                                    <div>No Changes</div>
-                                </div>} 
-                        
+                            {(states.totalDeaths - props.day_change_cases[index].totalDeaths) <= 0 ? <div>
+                            <div>Total Deaths: 0</div>
+                            </div> : <div>Total Deaths: <span className="font-weight-bold">
+                            {(states.totalDeaths - props.day_change_cases[index].totalDeaths).toLocaleString()}</span></div>}
+                            
+                        </div>
                     </div>
                 </div>
             ))}

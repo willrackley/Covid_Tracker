@@ -65,18 +65,34 @@ class LandingPage extends Component {
     get_yesterday_usa_stats = () => {
         API.get_latest_usa_stats()
         .then(res => {
-            this.setState({
-                yesterday_usa_stats: {
-                    total_cases: res.data[0].totalCases,
-                    total_deaths: res.data[0].totalDeaths,
-                    timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
-                }, 
-                day_change_stats: {
-                    total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
-                    total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
-                },
-                isLoading_day_change: false,
-            })
+            //check to see if the user is looking within the same day as when the latest entry was saved. If so, retrieve the prior entry (which woul be the day before)
+            if (moment().format("MMMM Do YYYY") === moment(res.data[0]).format("MMMM Do YYYY")) {
+                this.setState({
+                    yesterday_usa_stats: {
+                        total_cases: res.data[1].totalCases,
+                        total_deaths: res.data[1].totalDeaths,
+                        timestamp: moment(res.data[1].created_at).format("h:mma MMMM Do YYYY")
+                    }, 
+                    day_change_stats: {
+                        total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[1].totalCases),
+                        total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[1].totalDeaths) 
+                    },
+                    isLoading_day_change: false,
+                })
+            } else {
+                this.setState({
+                    yesterday_usa_stats: {
+                        total_cases: res.data[0].totalCases,
+                        total_deaths: res.data[0].totalDeaths,
+                        timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
+                    }, 
+                    day_change_stats: {
+                        total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
+                        total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
+                    },
+                    isLoading_day_change: false,
+                })
+            }   
         })
     }
 
@@ -99,8 +115,6 @@ class LandingPage extends Component {
                         timestamp: res.data[0].created_at
                     }
                 })
-                
-                console.log(this.state.yesterday_states_stats.states)
             })
             .catch(err => console.log(err))
     }
@@ -233,8 +247,8 @@ class LandingPage extends Component {
                             </Card>
                         </div>
                     </div>
-                    <div className="text-center h3">Day Change Statistics </div>
-                    <div className="text-center">
+                    <div className="text-center h3 mt-5">Day Change Statistics </div>
+                    <div className="text-center mb-2">
                         {this.state.isLoading_day_change ? <span>
                         </span>:<span>Data saved at {this.state.yesterday_usa_stats.timestamp}</span>}
                          
@@ -248,7 +262,7 @@ class LandingPage extends Component {
                                 <Card.Text>
                                     {this.state.isLoading_day_change ? <span className="spinner-border" role="status">
                                     <span className="sr-only">Loading...</span>
-                                    </span>:<span>{this.state.day_change_stats.total_cases < 0 ? <span>No new cases!</span> : <span>{this.state.day_change_stats.total_cases}</span>}</span>}
+                                    </span>:<span>{this.state.day_change_stats.total_cases < 0 ? <span>No new cases!</span> : <span>{this.state.day_change_stats.total_cases.toLocaleString()}</span>}</span>}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -261,7 +275,7 @@ class LandingPage extends Component {
                                     <Card.Text>
                                     {this.state.isLoading_day_change ? <span className="spinner-border" role="status">
                                     <span className="sr-only">Loading...</span>
-                                    </span>:<span>{this.state.day_change_stats.total_deaths < 0 ? <span>No deaths!</span> : <span>{this.state.day_change_stats.total_deaths}</span>}</span>}
+                                    </span>:<span>{this.state.day_change_stats.total_deaths < 0 ? <span>No deaths!</span> : <span>{this.state.day_change_stats.total_deaths.toLocaleString()}</span>}</span>}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
