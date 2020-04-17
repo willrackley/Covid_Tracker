@@ -1,7 +1,6 @@
 import React, { Component, } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Jumbotron from "react-bootstrap/Jumbotron";
@@ -12,6 +11,8 @@ import API from "../utils/API"
 import moment from "moment";
 
 class LandingPage extends Component {
+
+    search_ref = React.createRef();
 
     state = {
         usa_stats: {
@@ -35,6 +36,8 @@ class LandingPage extends Component {
         isLoading_day_change: true,
         isLoading_usa_current_stats: true,
         isLoading_states_stats: true,
+        state_search: "",
+        predictive_text_options: ""
     }
 
     async componentDidMount(){
@@ -202,6 +205,27 @@ class LandingPage extends Component {
         }
     }
 
+    confirm_search = (state) => {
+        this.search_ref.current.value = state
+        console.log(state)
+    }
+
+    getSearchText = () => {
+        this.setState({ state_search: this.search_ref.current.value })
+        //console.log(this.search_ref.current.value)
+        let state_options = [];
+        let search_text = this.search_ref.current.value;
+        for (let i=0; i < this.state.states_stats.length; i++) {
+            let state = this.state.states_stats[i].state.toLowerCase();
+            if (state.indexOf(search_text.toLowerCase())===0) {
+                state_options.push(<div onClick={() => this.confirm_search(state)} key={state}>{state}</div>)
+                
+            }
+        }
+        this.setState({ predictive_text_options: state_options })
+        console.log(state_options)
+    }
+
     render() {
         return (
             <div>
@@ -210,23 +234,19 @@ class LandingPage extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#link">Link</Nav.Link>
-                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                        </NavDropdown>
+                        
                         </Nav>
                         <Form inline>
-                        <FormControl type="text" placeholder="Search State" className="mr-sm-2" />
-                        <Button variant="outline-success">Search</Button>
+                        <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} className="mr-sm-2" />
+                        <Button onClick={()=> console.log('clicked')} variant="outline-success">Search</Button>
+                        
                         </Form>
                     </Navbar.Collapse>
                 </Navbar>
-
+                    <div>
+                        {this.state.search_text === "" ? <div/>: 
+                        <div>{this.state.predictive_text_options}</div>}
+                    </div>
                 <Jumbotron fluid="true" className="mb-5">
                     <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
                     <div className="text-center h3">Current Statistics</div>
