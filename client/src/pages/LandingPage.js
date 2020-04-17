@@ -34,16 +34,15 @@ class LandingPage extends Component {
         },
         isLoading_day_change: true,
         isLoading_usa_current_stats: true,
-        isLoading_states_stats: true
+        isLoading_states_stats: true,
     }
 
     async componentDidMount(){
         await this.get_current_usa_stats();
-      
+        await this.get_current_states_stats();
+        await this.get_yesterday_states_stats();
         await new Promise((resolve, reject) => setTimeout(resolve, 2000))
-        this.get_current_states_stats();
         this.get_yesterday_usa_stats();
-        this.get_yesterday_states_stats();
         this.save_usa_stats();
         this.save_states_stats();
     }
@@ -109,12 +108,23 @@ class LandingPage extends Component {
     get_yesterday_states_stats = () => {
         API.get_latest_states_stats()
             .then(res => {
-                this.setState({
-                    yesterday_states_stats: {
-                        states: res.data[0].states,
-                        timestamp: res.data[0].created_at
-                    }
-                })
+                //check if the latest stats are from today, if so then grab the entry before that
+                if ((moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY"))) {
+                    this.setState({
+                        yesterday_states_stats: {
+                            states: res.data[1].states,
+                            timestamp: res.data[1].created_at
+                        }
+                    })
+                } else {
+                    this.setState({
+                        yesterday_states_stats: {
+                            states: res.data[0].states,
+                            timestamp: res.data[0].created_at
+                        }
+                    })
+                }
+                
             })
             .catch(err => console.log(err))
     }
@@ -176,7 +186,6 @@ class LandingPage extends Component {
                     })
                     .catch(err => console.log(err))
                 } else {
-
                     if ((moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY"))) {
                         return;
                     } else {
