@@ -68,7 +68,7 @@ class LandingPage extends Component {
         API.get_latest_usa_stats()
         .then(res => {
             //check to see if the user is looking within the same day as when the latest entry was saved. If so, retrieve the prior entry (which woul be the day before)
-            if (moment().format("MMMM Do YYYY") === moment(res.data[0]).format("MMMM Do YYYY")) {
+            if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
                 this.setState({
                     yesterday_usa_stats: {
                         total_cases: res.data[1].totalCases,
