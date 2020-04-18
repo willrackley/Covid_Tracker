@@ -6,7 +6,7 @@ export default function StatesCard(props) {
         <div className="card-deck d-flex justify-content-center">
             {props.results.map((states, index) => (
                 <div key={states.key}>
-                    <div className="card mb-5" style={{ width: '18rem' }}>
+                    <div className="card mb-5" id={states.state.replace(/\s+/g, '').toLowerCase()} style={{ width: '18rem' }}>
                         <div className="card-header text-center font-weight-bold">{states.state}</div>
                         <div className="card-body">
                             

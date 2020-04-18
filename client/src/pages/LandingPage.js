@@ -9,10 +9,13 @@ import Button from "react-bootstrap/Button";
 import StatesCard from "../components/StateCards"
 import API from "../utils/API"
 import moment from "moment";
+import "./style.css"
+
 
 class LandingPage extends Component {
 
     search_ref = React.createRef();
+    state_ref = React.createRef();
 
     state = {
         usa_stats: {
@@ -36,8 +39,9 @@ class LandingPage extends Component {
         isLoading_day_change: true,
         isLoading_usa_current_stats: true,
         isLoading_states_stats: true,
-        state_search: "",
-        predictive_text_options: ""
+        state_search_box: "none",
+        predictive_text_options: "",
+        show_predictive_text: false
     }
 
     async componentDidMount(){
@@ -207,23 +211,38 @@ class LandingPage extends Component {
 
     confirm_search = (state) => {
         this.search_ref.current.value = state
-        console.log(state)
+        this.setState({ state_search_box: "none"})
+    }
+
+    scroll_to_state = () => {
+        console.log(this.search_ref.current.value.replace(/\s+/g, ''))
+        let state_name = this.search_ref.current.value.replace(/\s+/g, '');
+        let el = document.getElementById(state_name);
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
 
     getSearchText = () => {
-        this.setState({ state_search: this.search_ref.current.value })
-        //console.log(this.search_ref.current.value)
+        this.setState({ 
+            show_predictive_text: true,
+            state_search_box: "block"
+        })
+        
         let state_options = [];
         let search_text = this.search_ref.current.value;
+        
         for (let i=0; i < this.state.states_stats.length; i++) {
             let state = this.state.states_stats[i].state.toLowerCase();
             if (state.indexOf(search_text.toLowerCase())===0) {
                 state_options.push(<div onClick={() => this.confirm_search(state)} key={state}>{state}</div>)
-                
+            } 
+            if (search_text === "") {
+                state_options = [];
+                this.setState({ state_search_box: "none"})
             }
         }
+        
         this.setState({ predictive_text_options: state_options })
-        console.log(state_options)
+        //console.log(state_options)
     }
 
     render() {
@@ -236,17 +255,10 @@ class LandingPage extends Component {
                         <Nav className="mr-auto">
                         
                         </Nav>
-                        <Form inline>
-                        <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} className="mr-sm-2" />
-                        <Button onClick={()=> console.log('clicked')} variant="outline-success">Search</Button>
                         
-                        </Form>
                     </Navbar.Collapse>
                 </Navbar>
-                    <div>
-                        {this.state.search_text === "" ? <div/>: 
-                        <div>{this.state.predictive_text_options}</div>}
-                    </div>
+                    
                 <Jumbotron fluid="true" className="mb-5">
                     <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
                     <div className="text-center h3">Current Statistics</div>
@@ -314,6 +326,23 @@ class LandingPage extends Component {
 
                 <div className="text-center">
                     <div className="display-4 text-center mb-5"> Covid-19 Statistics by State</div>
+
+                    <div className="d-flex justify-content-center">
+                        <Form inline>
+                           
+                            <Form.Group >
+                                <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} className=""/>
+                                
+                                <Button onClick={()=> this.scroll_to_state()} variant="outline-success">Search</Button>
+                            </Form.Group>
+                        </Form> 
+                    </div>
+                    <div className="mb-5" >
+                       <div className="mb-5 mx-auto text-left border-top-0 py-2" id="predictive_text_container" style={{display: this.state.state_search_box}}>
+                            {this.state.predictive_text_options}
+                       </div>
+                    </div>
+                    
 
                     {this.state.isLoading_states_stats ? <div className=" spinner-border text-center" role="status">
                     <span className="sr-only">Loading...</span>
