@@ -197,7 +197,6 @@ class LandingPage extends Component {
                         return;
                     } else {
                         let stats_to_save = { states: this.state.states_stats };
-                        console.log(stats_to_save)
                         API.save_current_states_stats(stats_to_save)
                         .then(res => {
                         })
@@ -215,7 +214,6 @@ class LandingPage extends Component {
     }
 
     scroll_to_state = () => {
-        console.log(this.search_ref.current.value.replace(/\s+/g, ''))
         let state_name = this.search_ref.current.value.replace(/\s+/g, '');
         let el = document.getElementById(state_name);
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -242,14 +240,13 @@ class LandingPage extends Component {
         }
         
         this.setState({ predictive_text_options: state_options })
-        //console.log(state_options)
     }
 
     render() {
         return (
             <div>
                 <Navbar bg="light" expand="lg">
-                    <Navbar.Brand href="#home">Covid Tracker</Navbar.Brand>
+                    <Navbar.Brand href="/" id="brand_name"><span className="text-danger">Covid</span> Tracker</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
@@ -259,9 +256,9 @@ class LandingPage extends Component {
                     </Navbar.Collapse>
                 </Navbar>
                     
-                <Jumbotron fluid="true" className="mb-5">
-                    <div className="display-4 text-center mb-5">USA Covid-19 Statistics</div>
-                    <div className="text-center h3">Current Statistics</div>
+                <Jumbotron fluid="true" id="jumbotron" className="mb-5">
+                    <div className="display-4 text-center text-white mb-2">USA Covid-19 Statistics</div>
+                    <div className="text-center text-white h3 mb-5">Current Statistics</div>
                     <div className="row">
                         <div className="col-md-6 d-flex justify-content-center p-2">
                         <Card className="text-center p-2" style={{ width: '18rem' }}>
@@ -288,13 +285,13 @@ class LandingPage extends Component {
                             </Card>
                         </div>
                     </div>
-                    <div className="text-center h3 mt-5">Day Change Statistics </div>
+                    <div className="text-center text-white h3 mt-5">Day Change Statistics </div>
                     <div className="text-center mb-2">
                         {this.state.isLoading_day_change ? <span>
-                        </span>:<span>Data saved at {this.state.yesterday_usa_stats.timestamp}</span>}
+                        </span>:<span className="text-white">Data saved at {this.state.yesterday_usa_stats.timestamp}</span>}
                          
                     </div>
-                    <div className="row">
+                    <div className="row mb-5">
                         <div className="col-md-6 d-flex justify-content-center p-2">
                         
                         <Card className="text-center p-2" style={{ width: '18rem' }}>
@@ -325,7 +322,7 @@ class LandingPage extends Component {
                 </Jumbotron>
 
                 <div className="text-center">
-                    <div className="display-4 text-center mb-5"> Covid-19 Statistics by State</div>
+                    <div className="display-4 text-center mb-3"> Covid-19 Statistics by State</div>
 
                     <div className="d-flex justify-content-center">
                         <Form inline>
@@ -333,7 +330,7 @@ class LandingPage extends Component {
                             <Form.Group >
                                 <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} className=""/>
                                 
-                                <Button onClick={()=> this.scroll_to_state()} variant="outline-success">Search</Button>
+                                <Button onClick={()=> this.scroll_to_state()} variant="outline-danger">Search</Button>
                             </Form.Group>
                         </Form> 
                     </div>

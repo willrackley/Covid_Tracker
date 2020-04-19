@@ -3,3 +3,14 @@
     width: 270px;
     padding-left: 12px;
 }
+
+#jumbotron {
+    background-image: url(../images/covid19.jpg);
+    background-repeat: no-repeat !important;
+    background-size: cover !important; 
+}
+
+#brand_name {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 30px;
+}

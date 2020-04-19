@@ -7,7 +7,7 @@ export default function StatesCard(props) {
             {props.results.map((states, index) => (
                 <div key={states.key}>
                     <div className="card mb-5" id={states.state.replace(/\s+/g, '').toLowerCase()} style={{ width: '18rem' }}>
-                        <div className="card-header text-center font-weight-bold">{states.state}</div>
+                        <div className="card-header bg-dark text-white text-center font-weight-bold">{states.state}</div>
                         <div className="card-body">
                             
                             <div className="card-text">
@@ -30,7 +30,7 @@ export default function StatesCard(props) {
                             
                             {(states.totalDeaths - props.day_change_cases[index].totalDeaths) <= 0 ? <div>
                             <div>Total Deaths: 0</div>
-                            </div> : <div>Total Deaths: <span className="font-weight-bold">
+                            </div> : <div className="text-danger">Total Deaths: <span className="font-weight-bold">
                             {(states.totalDeaths - props.day_change_cases[index].totalDeaths).toLocaleString()}</span></div>}
                             
                         </div>
