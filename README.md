@@ -12,7 +12,7 @@
 
 ---
 
-![alt text](client/src/images/state_stats.png "Covid Tracker States Section")
+![alt text](client/src/images/state_stats1.png "Covid Tracker States Section")
 
 ---
 
