@@ -121,23 +121,27 @@ class LandingPage extends Component {
     get_yesterday_states_stats = () => {
         API.get_latest_states_stats()
             .then(res => {
-                //check if the latest stats are from today, if so then grab the entry before that
-                if ((moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY"))) {
-                    this.setState({
-                        yesterday_states_stats: {
-                            states: res.data[1].states,
-                            timestamp: res.data[1].created_at
-                        }
-                    })
+                //check to first see if there is atleast 'yesterdays' case in the database
+                if (res.data.length < 2) {
+                    return;
                 } else {
-                    this.setState({
-                        yesterday_states_stats: {
-                            states: res.data[0].states,
-                            timestamp: res.data[0].created_at
-                        }
-                    })
+                    //check if the latest stats are from today, if so then grab the entry before that
+                    if ((moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY"))) {
+                        this.setState({
+                            yesterday_states_stats: {
+                                states: res.data[1].states,
+                                timestamp: res.data[1].created_at
+                            }
+                        })
+                    } else {
+                        this.setState({
+                            yesterday_states_stats: {
+                                states: res.data[0].states,
+                                timestamp: res.data[0].created_at
+                            }
+                        })
+                    }
                 }
-                
             })
             .catch(err => console.log(err))
     }
