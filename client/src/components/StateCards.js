@@ -18,8 +18,7 @@ export default function StatesCard(props) {
                                 </div>
                             </div>
                         </div>
-
-                         <div className="card-footer">
+                        {!props.day_change_cases.length ? <div/> : <div className="card-footer">
                             
                             <div className="font-weight-bold text-center">Day Change</div>
 
@@ -33,7 +32,8 @@ export default function StatesCard(props) {
                             </div> : <div className="text-danger">Total Deaths: <span className="font-weight-bold">
                             {(states.totalDeaths - props.day_change_cases[index].totalDeaths).toLocaleString()}</span></div>}
                             
-                        </div>
+                        </div>}
+                         
                     </div>
                 </div>
             ))}
