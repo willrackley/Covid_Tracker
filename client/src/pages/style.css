@@ -14,3 +14,16 @@
     font-family: 'Open Sans', sans-serif;
     font-size: 30px;
 }
+
+@media screen and (max-width: 425px){
+
+    #search_bar {
+        width: 70%;
+        float: left;
+    }
+
+    #form {
+        justify-content: center;
+    }
+   
+}

@@ -336,13 +336,13 @@ class LandingPage extends Component {
                 <div className="text-center">
                     <div className="display-4 text-center mb-3"> Covid-19 Statistics by State</div>
 
-                    <div className="d-flex justify-content-center">
-                        <Form inline>
+                    <div className="d-flex justify-content-center search_container">
+                        <Form inline id="form">
                            
                             <Form.Group >
-                                <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} className=""/>
+                                <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} id="search_bar"/>
                                 
-                                <Button onClick={()=> this.scroll_to_state()} variant="outline-danger">Search</Button>
+                                <Button id="search_btn" onClick={()=> this.scroll_to_state()} variant="outline-danger">Search</Button>
                             </Form.Group>
                         </Form> 
                     </div>

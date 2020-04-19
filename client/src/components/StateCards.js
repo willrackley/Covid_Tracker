@@ -1,9 +1,9 @@
 import React from "react"
-
+import "./style.css"
 //this component will create a card deck of all 50 states and DC with their covid stats
 export default function StatesCard(props) {
     return (
-        <div className="card-deck d-flex justify-content-center">
+        <div className="card-deck flex-wrap d-flex justify-content-center">
             {props.results.map((states, index) => (
                 <div key={states.key}>
                     <div className="card mb-5" id={states.state.replace(/\s+/g, '').toLowerCase()} style={{ width: '18rem' }}>
