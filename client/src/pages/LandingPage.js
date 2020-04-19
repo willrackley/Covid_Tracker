@@ -13,7 +13,8 @@ import "./style.css"
 
 
 class LandingPage extends Component {
-
+    
+    //refs for state search
     search_ref = React.createRef();
     state_ref = React.createRef();
 
