@@ -73,7 +73,7 @@ class LandingPage extends Component {
         API.get_latest_usa_stats()
         .then(res => {
             //check to first see if there is atleast 'yesterdays' case in the database
-            if (res.data.length < 2) {
+            if (res.data.length < 1) {
                 return;
             } else {
                 //check to see if the user is looking within the same day as when the latest entry was saved. If so, retrieve the prior entry (which woul be the day before)
@@ -122,7 +122,7 @@ class LandingPage extends Component {
         API.get_latest_states_stats()
             .then(res => {
                 //check to first see if there is atleast 'yesterdays' case in the database
-                if (res.data.length < 2) {
+                if (res.data.length < 1) {
                     return;
                 } else {
                     //check if the latest stats are from today, if so then grab the entry before that
