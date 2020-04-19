@@ -295,7 +295,8 @@ class LandingPage extends Component {
                             </Card>
                         </div>
                     </div>
-                    <div className="text-center text-white h3 mt-5">Day Change Statistics </div>
+
+                    {this.state.yesterday_usa_stats.total_cases === 0 ? <div/> : <span><div className="text-center text-white h3 mt-5">Day Change Statistics </div>
                     <div className="text-center mb-2">
                         {this.state.isLoading_day_change ? <span>
                         </span>:<span className="text-white">Data saved at {this.state.yesterday_usa_stats.timestamp}</span>}
@@ -327,8 +328,9 @@ class LandingPage extends Component {
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
-                        </div>
-                    </div>
+                        </div></div></span>}
+                    
+                    
                 </Jumbotron>
 
                 <div className="text-center">
