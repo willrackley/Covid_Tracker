@@ -25,5 +25,12 @@
     #form {
         justify-content: center;
     }
+
+    #brand_name {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 30px;
+        text-align: center;
+        width: 100%;
+    }
    
 }

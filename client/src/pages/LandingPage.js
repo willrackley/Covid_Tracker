@@ -1,6 +1,5 @@
 import React, { Component, } from "react";
 import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Jumbotron from "react-bootstrap/Jumbotron";
@@ -256,14 +255,8 @@ class LandingPage extends Component {
         return (
             <div>
                 <Navbar bg="light" expand="lg">
-                    <Navbar.Brand href="/" id="brand_name"><span className="text-danger">Covid</span> Tracker</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto">
-                        
-                        </Nav>
-                        
-                    </Navbar.Collapse>
+                    <Navbar.Brand className="" href="/" id="brand_name"><span className="text-danger">Covid</span> Tracker</Navbar.Brand>
+
                 </Navbar>
                     
                 <Jumbotron fluid="true" id="jumbotron" className="mb-5">
