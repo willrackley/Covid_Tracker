@@ -224,8 +224,23 @@ class LandingPage extends Component {
 
     scroll_to_state = () => {
         let state_name = this.search_ref.current.value.replace(/\s+/g, '');
-        let el = document.getElementById(state_name);
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        let no_regex_state_name = this.search_ref.current.value;
+
+        if (no_regex_state_name === ""){
+            return; 
+        } else {
+            for (let i=0; i < this.state.states_stats.length; i++) {
+                let state = this.state.states_stats[i].state.toLowerCase();
+                if (state.indexOf(no_regex_state_name.toLowerCase()) === 0) {
+                    let el = document.getElementById(state_name);
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                } else {
+                    this.setState({ predictive_text_options: <div>{`${no_regex_state_name} not found`}</div> })
+                } 
+            }
+        }
+        
+        
     }
 
     getSearchText = () => {
@@ -335,7 +350,7 @@ class LandingPage extends Component {
                             <Form.Group >
                                 <FormControl ref={this.search_ref} type="text" placeholder="search a state" onChange={this.getSearchText} id="search_bar"/>
                                 
-                                <Button id="search_btn" onClick={()=> this.scroll_to_state()} variant="outline-danger">Search</Button>
+                                <Button id="search_btn" onClick={()=> this.scroll_to_state()} variant="outline-danger" >Search</Button>
                             </Form.Group>
                         </Form> 
                     </div>
