@@ -13,7 +13,7 @@ import "./style.css"
 
 
 class LandingPage extends Component {
-    
+
     //refs for state search
     search_ref = React.createRef();
     state_ref = React.createRef();
@@ -72,34 +72,39 @@ class LandingPage extends Component {
     get_yesterday_usa_stats = () => {
         API.get_latest_usa_stats()
         .then(res => {
-            //check to see if the user is looking within the same day as when the latest entry was saved. If so, retrieve the prior entry (which woul be the day before)
-            if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
-                this.setState({
-                    yesterday_usa_stats: {
-                        total_cases: res.data[1].totalCases,
-                        total_deaths: res.data[1].totalDeaths,
-                        timestamp: moment(res.data[1].created_at).format("h:mma MMMM Do YYYY")
-                    }, 
-                    day_change_stats: {
-                        total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[1].totalCases),
-                        total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[1].totalDeaths) 
-                    },
-                    isLoading_day_change: false,
-                })
+            //check to first see if there is atleast 'yesterdays' case in the database
+            if (res.data.length < 2) {
+                return;
             } else {
-                this.setState({
-                    yesterday_usa_stats: {
-                        total_cases: res.data[0].totalCases,
-                        total_deaths: res.data[0].totalDeaths,
-                        timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
-                    }, 
-                    day_change_stats: {
-                        total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
-                        total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
-                    },
-                    isLoading_day_change: false,
-                })
-            }   
+                //check to see if the user is looking within the same day as when the latest entry was saved. If so, retrieve the prior entry (which woul be the day before)
+                if (moment().format("MMMM Do YYYY") === moment(res.data[0].created_at).format("MMMM Do YYYY")) {
+                    this.setState({
+                        yesterday_usa_stats: {
+                            total_cases: res.data[1].totalCases,
+                            total_deaths: res.data[1].totalDeaths,
+                            timestamp: moment(res.data[1].created_at).format("h:mma MMMM Do YYYY")
+                        }, 
+                        day_change_stats: {
+                            total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[1].totalCases),
+                            total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[1].totalDeaths) 
+                        },
+                        isLoading_day_change: false,
+                    })
+                } else {
+                    this.setState({
+                        yesterday_usa_stats: {
+                            total_cases: res.data[0].totalCases,
+                            total_deaths: res.data[0].totalDeaths,
+                            timestamp: moment(res.data[0].created_at).format("h:mma MMMM Do YYYY")
+                        }, 
+                        day_change_stats: {
+                            total_cases: parseInt(this.state.usa_stats.total_cases.replace(/,/g,'')) - parseInt(res.data[0].totalCases),
+                            total_deaths: parseInt(this.state.usa_stats.total_deaths.replace(/,/g,'')) - parseInt(res.data[0].totalDeaths) 
+                        },
+                        isLoading_day_change: false,
+                    })
+                }
+            }    
         })
     }
 
