@@ -147,7 +147,7 @@ class LandingPage extends Component {
 
     save_usa_stats = () => {
         //saving the stats for the day if its past 5pm (but only save it once)
-        if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
+        if (moment().isAfter(moment('7:00am', 'h:mma')) && !this.state.usa_stats_saved) {
 
             //first check if the stats have been saved for today, if not then we save them
             API.get_latest_usa_stats()
@@ -187,7 +187,7 @@ class LandingPage extends Component {
 
     save_states_stats = () => {
         //saving the stats for the day if its past 5pm (but only save it once)
-        if (moment().isAfter(moment('5:00pm', 'h:mma')) && !this.state.usa_stats_saved) {
+        if (moment().isAfter(moment('7:00am', 'h:mma')) && !this.state.usa_stats_saved) {
 
             //first check if the stats have been saved for today, if not then we save them
             API.get_latest_states_stats()
